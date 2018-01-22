@@ -39,10 +39,12 @@
             this.btnDump = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.btnAbout = new System.Windows.Forms.ToolStripButton();
-            this.txtMail = new ScintillaNET.Scintilla();
+            //this.txtMail = new ScintillaNET.Scintilla();
+            this.txtMail = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -53,6 +55,7 @@
             this.btnOpen,
             this.toolStripSeparator1,
             this.btnMailBody,
+            this.toolStripButton1,
             this.toolStripSeparator3,
             this.btnFiles,
             this.toolStripSeparator4,
@@ -72,7 +75,7 @@
             this.btnOpen.Image = ((System.Drawing.Image)(resources.GetObject("btnOpen.Image")));
             this.btnOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(44, 22);
+            this.btnOpen.Size = new System.Drawing.Size(40, 22);
             this.btnOpen.Text = "&Open";
             this.btnOpen.ToolTipText = "Choose a .msg file";
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
@@ -88,7 +91,7 @@
             this.btnMailBody.Image = ((System.Drawing.Image)(resources.GetObject("btnMailBody.Image")));
             this.btnMailBody.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMailBody.Name = "btnMailBody";
-            this.btnMailBody.Size = new System.Drawing.Size(37, 22);
+            this.btnMailBody.Size = new System.Drawing.Size(34, 22);
             this.btnMailBody.Text = "Mail";
             this.btnMailBody.ToolTipText = "view the content of the Mail";
             this.btnMailBody.Click += new System.EventHandler(this.btnMailBody_Click);
@@ -104,7 +107,7 @@
             this.btnFiles.Image = ((System.Drawing.Image)(resources.GetObject("btnFiles.Image")));
             this.btnFiles.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnFiles.Name = "btnFiles";
-            this.btnFiles.Size = new System.Drawing.Size(92, 22);
+            this.btnFiles.Size = new System.Drawing.Size(88, 22);
             this.btnFiles.Text = "Attachments";
             this.btnFiles.ToolTipText = "view the Attachment(plain text only)";
             // 
@@ -120,7 +123,7 @@
             this.btnDump.Image = ((System.Drawing.Image)(resources.GetObject("btnDump.Image")));
             this.btnDump.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDump.Name = "btnDump";
-            this.btnDump.Size = new System.Drawing.Size(142, 22);
+            this.btnDump.Size = new System.Drawing.Size(132, 22);
             this.btnDump.Text = "Save Attatchments As..";
             this.btnDump.Click += new System.EventHandler(this.btnDump_Click);
             // 
@@ -135,7 +138,7 @@
             this.btnAbout.Image = ((System.Drawing.Image)(resources.GetObject("btnAbout.Image")));
             this.btnAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAbout.Name = "btnAbout";
-            this.btnAbout.Size = new System.Drawing.Size(47, 22);
+            this.btnAbout.Size = new System.Drawing.Size(44, 22);
             this.btnAbout.Text = "About";
             this.btnAbout.Click += new System.EventHandler(this.btnAbout_Click);
             // 
@@ -146,11 +149,13 @@
             this.txtMail.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.txtMail.Location = new System.Drawing.Point(0, 25);
             this.txtMail.Name = "txtMail";
-            this.txtMail.Size = new System.Drawing.Size(693, 449);
+            this.txtMail.Size = new System.Drawing.Size(693, 493);
             this.txtMail.TabIndex = 1;
-            this.txtMail.UseTabs = false;
-            this.txtMail.WrapMode = ScintillaNET.WrapMode.Word;
-            this.txtMail.StyleNeeded += new System.EventHandler<ScintillaNET.StyleNeededEventArgs>(this.txtMail_StyleNeeded);
+            //this.txtMail.UseTabs = false;
+            //this.txtMail.WrapVisualFlagLocation = ScintillaNET.WrapVisualFlagLocation.EndByText;
+            //this.txtMail.WrapVisualFlags = ((ScintillaNET.WrapVisualFlags)(((ScintillaNET.WrapVisualFlags.End | ScintillaNET.WrapVisualFlags.Start) 
+            //| ScintillaNET.WrapVisualFlags.Margin)));
+            //this.txtMail.StyleNeeded += new System.EventHandler<ScintillaNET.StyleNeededEventArgs>(this.txtMail_StyleNeeded);
             this.txtMail.DragDrop += new System.Windows.Forms.DragEventHandler(this.txtMail_DragDrop);
             this.txtMail.DragEnter += new System.Windows.Forms.DragEventHandler(this.txtMail_DragEnter);
             // 
@@ -158,9 +163,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 474);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 518);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(693, 26);
+            this.statusStrip1.Size = new System.Drawing.Size(693, 24);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -168,7 +173,7 @@
             // 
             this.lblStatus.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(17, 21);
+            this.lblStatus.Size = new System.Drawing.Size(16, 19);
             this.lblStatus.Text = "-";
             // 
             // openFileDialog1
@@ -177,11 +182,21 @@
             this.openFileDialog1.Filter = "Msg files (*.msg)|*.msg|All files (*.*)|*.*";
             this.openFileDialog1.Title = "Please choose msg file from outlook";
             // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(61, 22);
+            this.toolStripButton1.Text = "Metadata";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
             // FrmMain2
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(693, 500);
+            this.ClientSize = new System.Drawing.Size(693, 542);
             this.Controls.Add(this.txtMail);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
@@ -204,8 +219,8 @@
         private System.Windows.Forms.ToolStripButton btnOpen;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton btnAbout;
-        //private System.Windows.Forms.TextBox txtMail;
-        private ScintillaNET.Scintilla txtMail;
+        private System.Windows.Forms.RichTextBox txtMail;
+        //private Scintilla txtMail;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lblStatus;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
@@ -215,6 +230,7 @@
         private System.Windows.Forms.ToolStripButton btnMailBody;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton btnDump;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
     }
 }
 

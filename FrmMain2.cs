@@ -15,6 +15,8 @@ namespace EmailViewer
 {
     public partial class FrmMain2 : Form
     {
+        private string MessageMetadata = null;
+
         private string MsgFilePath = null;
         private string MailBody = null;
         private List<string> Attachments = new List<string>();
@@ -46,21 +48,21 @@ namespace EmailViewer
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
-            txtMail.StyleResetDefault();
-            txtMail.Styles[Style.Default].Font = "Consolas";
-            txtMail.Styles[Style.Default].Size = 10;
-            txtMail.StyleClearAll();
+            //txtMail.StyleResetDefault();
+            //txtMail.Styles[Style.Default].Font = "Consolas";
+            //txtMail.Styles[Style.Default].Size = 10;
+            //txtMail.StyleClearAll();
 
-            txtMail.Styles[QuoteproLexer.StyleDefault].ForeColor = Color.Black;
-            txtMail.Styles[QuoteproLexer.StyleKeyword].ForeColor = Color.Blue;
-            txtMail.Styles[QuoteproLexer.StyleIdentifier].ForeColor = Color.Teal;
-            txtMail.Styles[QuoteproLexer.StyleNumber].ForeColor = Color.Purple;
-            txtMail.Styles[QuoteproLexer.StyleString].ForeColor = Color.Red;
+            //txtMail.Styles[QuoteproLexer.StyleDefault].ForeColor = Color.Black;
+            //txtMail.Styles[QuoteproLexer.StyleKeyword].ForeColor = Color.Blue;
+            //txtMail.Styles[QuoteproLexer.StyleIdentifier].ForeColor = Color.Teal;
+            //txtMail.Styles[QuoteproLexer.StyleNumber].ForeColor = Color.Purple;
+            //txtMail.Styles[QuoteproLexer.StyleString].ForeColor = Color.Red;
 
-            txtMail.Styles[QuoteproLexer.StyleAutoOrHome].ForeColor = Color.Black;
-            txtMail.Styles[QuoteproLexer.StyleAutoOrHome].BackColor = Color.Yellow;
+            //txtMail.Styles[QuoteproLexer.StyleAutoOrHome].ForeColor = Color.Black;
+            //txtMail.Styles[QuoteproLexer.StyleAutoOrHome].BackColor = Color.Yellow;
 
-            txtMail.Lexer = Lexer.Container;
+            //txtMail.Lexer = Lexer.Container;
 
             //txtMail.Lexer = Lexer.Null;
 
@@ -91,44 +93,67 @@ namespace EmailViewer
 
             FileInfo fi = new FileInfo(msgfile);
             this.Text = string.Format("EmailViewer of {0}", fi.Name);
-            using (Stream messageStream = File.Open(msgfile, FileMode.Open, FileAccess.Read))
+            try
             {
-                //fileName = string.Empty;
-                OutlookStorage.Message message = new OutlookStorage.Message(messageStream);
-                messageStream.Close();
-                try
+                using (Stream messageStream = File.Open(msgfile, FileMode.Open, FileAccess.Read))
                 {
-                    //获取comment#
-                    //Comment has been added as: 34227
-                    //string comment = null;
-                    MailBody = message.BodyText;
-                    this.txtMail.Text = MailBody;
-
-                    //附件
-                    if (message.Attachments.Count > 0)
+                    //fileName = string.Empty;
+                    OutlookStorage.Message message = new OutlookStorage.Message(messageStream);
+                    messageStream.Close();
+                    try
                     {
-                        int i = 0;
-                        foreach (OutlookStorage.Attachment item in message.Attachments)
+                        //获取comment#
+                        //Comment has been added as: 34227
+                        //string comment = null;
+                        MailBody = message.BodyRTF;
+
+                        //附件
+                        string attachments = "";
+                        if (message.Attachments.Count > 0)
                         {
-                            string fileContent = System.Text.Encoding.UTF8.GetString(item.Data);
-                            Attachments.Add(fileContent);
-                            ToolStripMenuItem ddItem = new ToolStripMenuItem(item.Filename);
-                            ddItem.Name = "btnFile" + i.ToString();
-                            ddItem.Width = 300;
-                            ddItem.Click += ddItem_Click;
-                            btnFiles.DropDownItems.Add(ddItem);
+                            int i = 0;
+                            foreach (OutlookStorage.Attachment item in message.Attachments)
+                            {
+                                string fileContent = System.Text.Encoding.UTF8.GetString(item.Data);
+                                Attachments.Add(fileContent);
+                                ToolStripMenuItem ddItem = new ToolStripMenuItem(item.Filename);
+                                ddItem.Name = "btnFile" + i.ToString();
+                                ddItem.Width = 300;
+                                ddItem.Click += ddItem_Click;
+                                btnFiles.DropDownItems.Add(ddItem);
+
+                                attachments += String.Format("\t{0}{1}", item.Filename, Environment.NewLine);
+                            }
+
                         }
+                        string recipients = "";
+                        foreach(OutlookStorage.Recipient recipeint in message.Recipients)
+                        {
+                            recipients += String.Format("\t{0} <{1}>{2}", recipeint.DisplayName, recipeint.Email, Environment.NewLine);
+                        }
+
+                        MessageMetadata = String.Format(@"Filename: {4}
+Subject: {0}
+From: {1}
+Recipients: 
+{2}
+Attachments: 
+{3}", message.Subject, message.From, recipients, attachments, fi.Name);
                         
+                        this.txtMail.Rtf = MailBody;
+                    }
+                    catch (IOException ex)
+                    {
+                        MessageBox.Show(ex.Message, "Exeception opening the email!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    finally
+                    {
+                        message.Dispose();
                     }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "不好,出了点儿问题", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    message.Dispose();
-                }
+            } catch (IOException ex)
+            {
+                MessageBox.Show(ex.Message, "Couldn't open file", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -202,10 +227,12 @@ namespace EmailViewer
         //int needed = 1;
         private void txtMail_StyleNeeded(object sender, StyleNeededEventArgs e)
         {
-            var startPos = txtMail.GetEndStyled();
-            var endPos = e.Position;
+            //var startPos = txtMail.GetEndStyled();
+            //var endPos = e.Position;
 
-            qpLexer.Style(txtMail, startPos, endPos);
+            //qpLexer.Style(txtMail, startPos, endPos);
+
+
             //lblStatus.Text = "needed" + needed.ToString();
             //needed++;
         }
@@ -447,7 +474,13 @@ namespace EmailViewer
 
         private void btnAbout_Click(object sender, EventArgs e)
         {
-            txtMail.InsertText(0, "//mailto:iimax@outlook.com" + Environment.NewLine);
+            //txtMail.InsertText(0, "//mailto:iimax@outlook.com" + Environment.NewLine);
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+
+            MessageBox.Show(MessageMetadata);
         }
     }
 }
