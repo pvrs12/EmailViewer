@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using ScintillaNET;
 using System.Xml;
+using System.Threading.Tasks;
 
 namespace EmailViewer
 {
     public partial class FrmMain2 : Form
     {
+        private string TempPath = Path.GetTempPath();
         private string MessageMetadata = null;
 
         private string MsgFilePath = null;
+        private string MessageFile = null;
         private string MailBody = null;
-        private List<string> Attachments = new List<string>();
+        private List<int> Attachments = new List<int>();
 
         private QuoteproLexer qpLexer = new QuoteproLexer("Type Agent Code State Quoted Insurer Web Login Password ProducerCode Comment has been added as Autoquote Homequote");
 
@@ -85,6 +82,7 @@ namespace EmailViewer
 
         private void ReadMsgFile(string msgfile)
         {
+            MessageFile = msgfile;
             //清空附件内容列表，删除附件菜单项
             MailBody = string.Empty;
             Attachments.Clear();
@@ -114,8 +112,8 @@ namespace EmailViewer
                             int i = 0;
                             foreach (OutlookStorage.Attachment item in message.Attachments)
                             {
-                                string fileContent = System.Text.Encoding.UTF8.GetString(item.Data);
-                                Attachments.Add(fileContent);
+                                //string fileContent = System.Text.Encoding.UTF8.GetString(item.Data);
+                                Attachments.Add(i);
                                 ToolStripMenuItem ddItem = new ToolStripMenuItem(item.Filename);
                                 ddItem.Name = "btnFile" + i.ToString();
                                 ddItem.Width = 300;
@@ -173,9 +171,59 @@ Attachments:
             }
             string AttachIndex = ddItem.Name.Substring(idx+7);
             int? index = ToInt(AttachIndex);
-            if (index.HasValue)
+            if (index.HasValue && MessageFile != null)
             {
-                this.txtMail.Text = Attachments[index.Value];
+                int attachmentNum = Attachments[index.Value];
+                try
+                {
+                    using (Stream messageStream = File.Open(MessageFile, FileMode.Open, FileAccess.Read))
+                    {
+                        //fileName = string.Empty;
+                        OutlookStorage.Message message = null ;
+                        try
+                        {
+                            message = new OutlookStorage.Message(messageStream);
+                            //messageStream.Close();
+
+                            int i = 0;
+                            OutlookStorage.Attachment attachment = null;
+                            foreach (OutlookStorage.Attachment attachment_ in message.Attachments)
+                            {
+                                if (i == attachmentNum)
+                                {
+                                    attachment = attachment_;
+                                    break;
+                                }
+                            }
+                            if (attachment == null)
+                            {
+                                MessageBox.Show("Something has gone terribly wrong in opening this attachment (can't find it attached anymore)");
+                                return;
+                            }
+                            string filename = String.Format("{0}{1}{2}", TempPath, Path.DirectorySeparatorChar, attachment.Filename);
+                            using (FileStream f = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.Write))
+                            {
+                                Task t = f.WriteAsync(attachment.Data, 0, attachment.Data.Length);
+                                t.ContinueWith((prevTask) =>
+                                {
+                                    System.Diagnostics.Process.Start(filename);
+                                });
+                            }
+                            
+
+                        }
+                        finally
+                        {
+                            if (message != null)
+                            {
+                                message.Dispose();
+                            } 
+                        }
+                    }
+                }catch(IOException ex)
+                {
+                    Console.WriteLine("ex", ex.Message);
+                }
             }
             else
             {
@@ -253,7 +301,7 @@ Attachments:
                     {
                         fileName = string.Empty;
                         OutlookStorage.Message message = new OutlookStorage.Message(messageStream);
-                        messageStream.Close();
+                        //messageStream.Close();
                         try
                         {
                             //获取comment#
